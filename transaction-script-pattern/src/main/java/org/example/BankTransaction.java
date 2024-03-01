@@ -8,14 +8,20 @@ import java.sql.SQLException;
 
 public class BankTransaction {
 
-    private final String dbConnection;
+    private final String dbUrl;
+    private final String user;
 
-    public BankTransaction(String dbConnection) {
-        this.dbConnection = dbConnection;
+    private final String password;
+
+
+    public BankTransaction(String dbUrl, String user, String password) {
+        this.dbUrl = dbUrl;
+        this.user = user;
+        this.password = password;
     }
 
     public void executeTransaction(Transaction transaction) throws Exception {
-        try (Connection conn = DriverManager.getConnection(dbConnection)) {
+        try (Connection conn = DriverManager.getConnection(dbUrl,user, password)) {
             Account account = getAccountById(transaction.getAccountId(), conn);
             if ("W".equals(transaction.getCode()) && account.getBalance() < transaction.getAmount()) {
                 throw new Exception("Insufficient balance");
@@ -38,7 +44,7 @@ public class BankTransaction {
     }
 
     private void updateBalance(Connection conn, Account account, double newBalance) throws SQLException {
-        String sql = "UPDATE accounts SET balance = ? WHERE id = ?";
+        String sql = "UPDATE account SET balance = ? WHERE id = ?";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setDouble(1, newBalance);
             statement.setInt(2, account.getId());
@@ -47,7 +53,7 @@ public class BankTransaction {
     }
 
     public void createTransaction(Connection conn, int accountId, double amount, String code) throws SQLException {
-        String sql = "INSERT INTO transactions (account_id, amount, code) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO transaction (account_id, amount, code) VALUES (?, ?, ?)";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setInt(1, accountId);
             statement.setDouble(2, amount);
@@ -57,7 +63,7 @@ public class BankTransaction {
     }
 
     public Account getAccountById(int accountId, Connection conn) throws SQLException {
-        String sql = "SELECT * FROM accounts WHERE id = ?";
+        String sql = "SELECT * FROM account WHERE id = ?";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setInt(1, accountId);
             try (ResultSet resultSet = statement.executeQuery()) {
