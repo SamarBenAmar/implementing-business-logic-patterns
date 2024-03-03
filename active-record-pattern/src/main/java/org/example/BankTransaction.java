@@ -8,19 +8,12 @@ public class BankTransaction {
         if ("W".equals(transaction.getCode()) && account.getBalance() < transaction.getAmount()) {
             throw new Exception("Insufficient balance");
         }
-
         conn.setAutoCommit(false);
-        try {
-            if ("W".equals(transaction.getCode())){
-                account.updateBalance(conn, account, account.getBalance() - transaction.getAmount());
-            } else if ("D".equals(transaction.getCode())) {
-                account.updateBalance(conn, account, account.getBalance() + transaction.getAmount());
-            }
-            transaction.saveTransaction(conn, transaction.getAccountId(), transaction.getAmount(), transaction.getCode());
-            conn.commit();
-        } catch (Exception e) {
-            conn.rollback();
-            throw e;
+        if ("W".equals(transaction.getCode())){
+            account.updateBalance(conn, account, account.getBalance() - transaction.getAmount());
+        } else if ("D".equals(transaction.getCode())) {
+            account.updateBalance(conn, account, account.getBalance() + transaction.getAmount());
         }
+        transaction.saveTransaction(conn, transaction.getAccountId(), transaction.getAmount(), transaction.getCode());
     }
 }

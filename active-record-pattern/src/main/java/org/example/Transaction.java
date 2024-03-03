@@ -37,6 +37,11 @@ public class Transaction {
             statement.setDouble(2, amount);
             statement.setString(3, code);
             statement.executeUpdate();
+            conn.commit();
+        } catch (SQLException e) {
+            conn.rollback();
+            throw e;
         }
+
     }
 }

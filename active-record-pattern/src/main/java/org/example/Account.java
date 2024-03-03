@@ -26,6 +26,10 @@ public class Account {
             statement.setDouble(1, newBalance);
             statement.setInt(2, account.getId());
             statement.executeUpdate();
+            conn.commit();
+        } catch (SQLException e) {
+            conn.rollback();
+            throw e;
         }
     }
 
