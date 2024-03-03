@@ -8,37 +8,24 @@ import java.sql.SQLException;
 
 public class BankTransaction {
 
-    private final String dbUrl;
-    private final String user;
-    private final String password;
+    public void executeTransaction(Transaction transaction, Connection conn) throws Exception {
+        Account account = getAccountById(transaction.getAccountId(), conn);
+        if ("W".equals(transaction.getCode()) && account.getBalance() < transaction.getAmount()) {
+            throw new Exception("Insufficient balance");
+        }
 
-
-    public BankTransaction(String dbUrl, String user, String password) {
-        this.dbUrl = dbUrl;
-        this.user = user;
-        this.password = password;
-    }
-
-    public void executeTransaction(Transaction transaction) throws Exception {
-        try (Connection conn = DriverManager.getConnection(dbUrl,user, password)) {
-            Account account = getAccountById(transaction.getAccountId(), conn);
-            if ("W".equals(transaction.getCode()) && account.getBalance() < transaction.getAmount()) {
-                throw new Exception("Insufficient balance");
+        conn.setAutoCommit(false);
+        try {
+            if ("W".equals(transaction.getCode())){
+                updateBalance(conn, account, account.getBalance() - transaction.getAmount());
+            } else if ("D".equals(transaction.getCode())) {
+                updateBalance(conn, account, account.getBalance() + transaction.getAmount());
             }
-
-            conn.setAutoCommit(false);
-            try {
-                if ("W".equals(transaction.getCode())){
-                    updateBalance(conn, account, account.getBalance() - transaction.getAmount());
-                } else if ("D".equals(transaction.getCode())) {
-                    updateBalance(conn, account, account.getBalance() + transaction.getAmount());
-                }
-                createTransaction(conn, transaction.getAccountId(), transaction.getAmount(), transaction.getCode());
-                conn.commit();
-            } catch (Exception e) {
-                conn.rollback();
-                throw e;
-            }
+            createTransaction(conn, transaction.getAccountId(), transaction.getAmount(), transaction.getCode());
+            conn.commit();
+        } catch (Exception e) {
+            conn.rollback();
+            throw e;
         }
     }
 
