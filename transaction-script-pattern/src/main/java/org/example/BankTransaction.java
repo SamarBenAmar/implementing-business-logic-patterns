@@ -10,7 +10,6 @@ public class BankTransaction {
 
     private final String dbUrl;
     private final String user;
-
     private final String password;
 
 
@@ -52,7 +51,7 @@ public class BankTransaction {
         }
     }
 
-    public void createTransaction(Connection conn, int accountId, double amount, String code) throws SQLException {
+    private void createTransaction(Connection conn, int accountId, double amount, String code) throws SQLException {
         String sql = "INSERT INTO transaction (account_id, amount, code) VALUES (?, ?, ?)";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setInt(1, accountId);
@@ -62,7 +61,7 @@ public class BankTransaction {
         }
     }
 
-    public Account getAccountById(int accountId, Connection conn) throws SQLException {
+    private Account getAccountById(int accountId, Connection conn) throws SQLException {
         String sql = "SELECT * FROM account WHERE id = ?";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setInt(1, accountId);
