@@ -8,16 +8,19 @@ import java.sql.SQLException;
 public class BankTransactionExecutor {
 
     public void executeTransaction(Transaction transaction, Connection conn) throws Exception {
-        Account account = getAccountById(transaction.getAccountId(), conn);
-        if ("W".equals(transaction.getCode()) && account.getBalance() < transaction.getAmount()) {
-            throw new Exception("Insufficient balance");
-        }
-
         conn.setAutoCommit(false);
         try {
-            if ("W".equals(transaction.getCode())){
-                updateBalance(conn, account, account.getBalance() - transaction.getAmount());
+            Account account = getAccountById(transaction.getAccountId(), conn);
+            if ("W".equals(transaction.getCode()) ) {
+                if (account.getBalance() >= transaction.getAmount() && transaction.getAmount() > 0) {
+                   updateBalance(conn, account, account.getBalance() - transaction.getAmount());
+                } else {
+                    throw new Exception("Insufficient balance or invalid withdrawal amount.");
+                }
             } else if ("D".equals(transaction.getCode())) {
+                if (transaction.getAmount() > 0) {
+                    throw new Exception("Invalid deposit amount.");
+                }
                 updateBalance(conn, account, account.getBalance() + transaction.getAmount());
             }
             createTransaction(conn, transaction.getAccountId(), transaction.getAmount(), transaction.getCode());

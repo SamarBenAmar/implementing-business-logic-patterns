@@ -32,6 +32,7 @@ public class Transaction {
 
     public void saveTransaction(Connection conn, int accountId, double amount, String code) throws SQLException {
         String sql = "INSERT INTO transaction (account_id, amount, code) VALUES (?, ?, ?)";
+        conn.setAutoCommit(false);
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setInt(1, accountId);
             statement.setDouble(2, amount);

@@ -22,6 +22,7 @@ public class Account {
 
     public void updateBalance(Connection conn, Account account, double newBalance) throws SQLException {
         String sql = "UPDATE account SET balance = ? WHERE id = ?";
+        conn.setAutoCommit(false);
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setDouble(1, newBalance);
             statement.setInt(2, account.getId());
