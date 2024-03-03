@@ -1,12 +1,11 @@
 package org.example;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class BankTransaction {
+public class BankTransactionExecutor {
 
     public void executeTransaction(Transaction transaction, Connection conn) throws Exception {
         Account account = getAccountById(transaction.getAccountId(), conn);

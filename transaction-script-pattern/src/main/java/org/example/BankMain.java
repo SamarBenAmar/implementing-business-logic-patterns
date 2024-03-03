@@ -9,7 +9,7 @@ public class BankMain {
     public static void main(String[] args) throws Exception {
         Account account = new Account(1, 100);
         Transaction transaction = new Transaction(1, account.getId(), 50, "W");
-        BankTransaction bankTransaction = new BankTransaction();
+        BankTransactionExecutor bankTransaction = new BankTransactionExecutor();
         try (Connection conn = DatabaseConnection.connect()) {
             bankTransaction.executeTransaction(transaction, conn);
         }

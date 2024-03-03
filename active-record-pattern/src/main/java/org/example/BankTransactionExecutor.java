@@ -1,7 +1,7 @@
 package org.example;
 
 import java.sql.Connection;
-public class BankTransaction {
+public class BankTransactionExecutor {
 
     public void executeTransaction(Transaction transaction, Connection conn) throws Exception {
         Account account = Account.getAccountById(transaction.getAccountId(), conn);
