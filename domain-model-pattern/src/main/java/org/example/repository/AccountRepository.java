@@ -38,7 +38,7 @@ public class AccountRepository {
             statement.setInt(1, accountId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new Account(resultSet.getInt("id"), new Money(BigDecimal.valueOf(resultSet.getDouble("balance")), Currency.getInstance("Euro")));
+                    return new Account(resultSet.getInt("id"), new Money(BigDecimal.valueOf(resultSet.getDouble("balance")), Currency.getInstance("USD")));
                 }
             }
         }
