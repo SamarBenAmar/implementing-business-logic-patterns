@@ -29,7 +29,6 @@ public class Account {
         }
     }
 
-
     public static Account getAccountById(int accountId, Connection conn) throws SQLException {
         String sql = "SELECT * FROM account WHERE id = ?";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
