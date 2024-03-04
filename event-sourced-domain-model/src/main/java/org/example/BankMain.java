@@ -9,6 +9,7 @@ import org.example.domain.model.Transaction;
 import org.example.domain.services.AccountService;
 import org.example.domain.services.TransactionService;
 import org.example.repository.AccountRepository;
+import org.example.repository.TransactionEventStore;
 import org.example.repository.TransactionRepository;
 
 import java.math.BigDecimal;
@@ -17,8 +18,9 @@ public class BankMain {
     public static void main(String[] args) throws Exception {
         TransactionRepository transactionRepository = new TransactionRepository();
         AccountRepository accountRepository = new AccountRepository();
+        TransactionEventStore transactionEventStore = new TransactionEventStore();
         TransactionService transactionService = new TransactionService(transactionRepository);
-        AccountService accountService = new AccountService(accountRepository);
+        AccountService accountService = new AccountService(accountRepository, transactionEventStore);
         Account account = new Account(1, new Money(BigDecimal.valueOf(100), Currency.getInstance("USD")));
         Transaction transaction = new Transaction(1, account.getId(), new Money(BigDecimal.valueOf(50),  Currency.getInstance("USD")), "W");
         BankTransactionExecutor bankTransaction = new BankTransactionExecutor(transactionService, accountService);
