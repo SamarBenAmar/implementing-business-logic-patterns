@@ -1,5 +1,11 @@
 package org.example.domain.model;
 
+import org.example.domain.events.DepositExecuted;
+import org.example.domain.events.TransactionExecuted;
+import org.example.domain.events.WithdrawalExecuted;
+
+import java.math.BigDecimal;
+
 public class Account {
 
     private int id;
@@ -10,23 +16,26 @@ public class Account {
         this.balance = balance;
     }
 
-    public void executeTransaction(Transaction transaction) throws Exception {
+    public TransactionExecuted executeTransaction(Transaction transaction) throws Exception {
         if ("W".equals(transaction.getCode())) {
-            withdraw(transaction.getAmount());
+            return withdraw(transaction.getAmount());
         } else if ("D".equals(transaction.getCode())) {
-            deposit(transaction.getAmount());
+            return deposit(transaction.getAmount());
         }
+        throw new Exception("Invalid transaction code");
     }
 
-    public void withdraw(Money amount) throws Exception {
-        if (balance.isLessThan(amount)) {
+    public WithdrawalExecuted withdraw(Money amount) throws Exception {
+        if (balance.isLessThan(amount)){
             throw new Exception("Insufficient balance");
         }
         balance.subtract(amount);
+        return new WithdrawalExecuted(this.id, amount);
     }
 
-    public void deposit(Money amount) {
+    public DepositExecuted deposit(Money amount) {
         balance.add(amount);
+        return new DepositExecuted(this.id, amount);
     }
 
     public int getId() {

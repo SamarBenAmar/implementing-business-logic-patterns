@@ -1,10 +1,8 @@
 package org.example.domain.model;
 
-import org.example.domain.model.Transaction;
+import org.example.domain.events.TransactionExecuted;
 import org.example.domain.services.AccountService;
 import org.example.domain.services.TransactionService;
-
-import java.sql.Connection;
 
 public class BankTransactionExecutor {
 
@@ -17,11 +15,12 @@ public class BankTransactionExecutor {
         this.accountService = accountService;
     }
 
-    public void executeTransaction(Transaction transaction) throws Exception {
+    public TransactionExecuted executeTransaction(Transaction transaction) throws Exception {
         Account account = accountService.getAccountById(transaction.getAccountId());
         if (account != null) {
-            accountService.executeTransaction(account.getId(), transaction);
+            TransactionExecuted transactionExecuted = accountService.executeTransaction(account.getId(), transaction);
             transactionService.saveTransaction(transaction);
+            return transactionExecuted;
         } else {
             throw new Exception("Account not found");
         }

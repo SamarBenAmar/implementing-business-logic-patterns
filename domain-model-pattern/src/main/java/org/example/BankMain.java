@@ -2,6 +2,7 @@ package org.example;
 
 
 import org.example.config.DatabaseConnection;
+import org.example.domain.events.TransactionExecuted;
 import org.example.domain.model.Account;
 import org.example.domain.model.BankTransactionExecutor;
 import org.example.domain.model.Money;
@@ -24,7 +25,8 @@ public class BankMain {
         Account account = new Account(1, new Money(BigDecimal.valueOf(100), Currency.getInstance("USD")));
         Transaction transaction = new Transaction(1, account.getId(), new Money(BigDecimal.valueOf(50),  Currency.getInstance("USD")), "W");
         BankTransactionExecutor bankTransaction = new BankTransactionExecutor(transactionService, accountService);
-        bankTransaction.executeTransaction(transaction);
+        TransactionExecuted transactionExecuted = bankTransaction.executeTransaction(transaction);
+        System.out.println(transactionExecuted.eventMessage());
 
         System.out.println("Transaction successful: " + transaction.getCode() + " " + transaction.getAmount());
         System.out.println("New balance: " + account.getBalance());

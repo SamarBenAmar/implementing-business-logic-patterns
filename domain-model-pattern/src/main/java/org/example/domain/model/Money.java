@@ -4,6 +4,12 @@ import java.math.BigDecimal;
 import java.util.Currency;
 
 public record Money(BigDecimal amount, Currency currency) {
+
+    public Money {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative");
+        }
+    }
     public Money add(Money money) {
         if (!currency.equals(money.currency)) {
             throw new IllegalArgumentException("Currency mismatch");
